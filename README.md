@@ -27,6 +27,9 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发vs Code 和Visual Studio 2019�
 3. vs code 按 F5 执行编译命令 “compile current Solidity contract”,会生成合约对应的abi和bin
 4. 将上面编译得到abi和bin 放到你的项目中，进行相关操作。
 
+参考：
+![Image text](https://github.com/linbin524/FISCOBCOS.Net/blob/main/Img/how-to-use-console-generator1.gif)
+
 #### 使用说明
 
 1. 在 FISOBCOS_NetSdk类库配置 BaseConfig 文件，配置好对应的底层请求DefaultUrl，如：http://127.0.0.1:8545
