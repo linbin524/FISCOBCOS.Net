@@ -40,5 +40,39 @@ namespace FISOBCOS_NetSdk.Utis
         {
             return Json == null ? JObject.Parse("{}") : JObject.Parse(Json.Replace("&nbsp;", ""));
         }
+
+        /// <summary>
+        /// 通过Json数据中的key获取对应的Value 重名的获取第一个
+        /// </summary>
+        /// <typeparam name="T">所获取数据的数据类型</typeparam>
+        /// <param name="jObject">JObject对象</param>
+        /// <param name="key">key</param>
+        /// <returns>key对应的Value  没有找到时返回null</returns>
+        public static T GetValueByKey<T>(this JObject jObject, string key)
+        {
+            var tempValue = jObject.GetValue(key);
+            if (tempValue != null)
+            {
+                return tempValue.Value<T>();
+            }
+            else
+            {
+                var enumerator = jObject.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    if (enumerator.Current.Value.HasValues)
+                    {
+                        T tempTValue = GetValueByKey<T>(enumerator.Current.Value as JObject, key);
+                        if (tempTValue != null)
+                        {
+                            return tempTValue;
+                        }
+                    }
+                }
+            }
+
+            return default(T);
+        }
+
     }
 }

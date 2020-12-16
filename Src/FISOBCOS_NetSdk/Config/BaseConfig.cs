@@ -35,6 +35,19 @@ namespace FISOBCOS_NetSdk
         /// </summary>
         public static int DefaultGasPrice = 30000000;
 
+        /// <summary>
+        /// 默认构建请求Id
+        /// </summary>
+        public static int DefaultRequestId = 1;
 
+        /// <summary>
+        /// 默认构建请求 参数Id
+        /// </summary>
+        public static int DefaultRequestObjectId = 1;
+
+        /// <summary>
+        /// 默认交易参数Value
+        /// </summary>
+        public static int DefaultTranscationsValue = 0;
     }
 }
