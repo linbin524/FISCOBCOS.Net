@@ -12,20 +12,20 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发vs Code 和Visual Studio 2019�
 
 #### 功能介绍
 
-1.实现 rpc 异步请求
-2.实现FISCO BCOS公私钥、账户生成，拓展生成webase front导入用户json，
-可以直接导入相关中间件。
-3.实现合约操作封装，如：合约部署、请求参数构建、交易签名、RLP编码转换、交易签名等
-4.实现合约部署、合约交易、合约Call操作、合约交易回执获取等
-5.实现 合约input、output、Event等解析
-6、所有操作配置对应的单元测试Demo。可以参考复制。
+1.  实现 rpc 异步请求
+2.  实现FISCO BCOS公私钥、账户生成，拓展生成webase front导入用户json，
+ 可以直接导入相关中间件。
+3.  实现合约操作封装，如：合约部署、请求参数构建、交易签名、RLP编码转换、交易签名等
+4.  实现合约部署、合约交易、合约Call操作、合约交易回执获取等
+5.  实现 合约input、output、Event等解析
+6.  所有操作配置对应的单元测试Demo。可以参考复制。
 
 #### 安装教程
 
 1.  下载源码，vs2019 nuget包还原。
 2. vs code 安装solidity 插件，在vs code创建一个文件夹存放原始sol合约。
 3. vs code 按 F5 执行编译命令 “compile current Solidity contract”,会生成合约对应的abi和bin
-4、将上面编译得到abi和bin 放到你的项目中，进行相关操作。
+4. 将上面编译得到abi和bin 放到你的项目中，进行相关操作。
 
 #### 使用说明
 
@@ -39,8 +39,8 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发vs Code 和Visual Studio 2019�
 #### 迭代计划
 
 1. 实现channel 协议
-2.  实现国密版本适配
-3.  业务归集等通用组件扩展
+2. 实现国密版本适配
+3. 业务归集等通用组件扩展
 
 
 #### 参与贡献
