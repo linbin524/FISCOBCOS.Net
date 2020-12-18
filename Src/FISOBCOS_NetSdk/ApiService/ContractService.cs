@@ -122,7 +122,7 @@ namespace FISOBCOS_NetSdk
         /// <returns></returns>
         public async Task<ReceiptResultDto> GetTranscationReceipt(string tanscationHash)
         {
-            var request = new RpcRequest(1, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
+            var request = new RpcRequest(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
             var result = await this.RpcClient.SendRequestAsync<ReceiptResultDto>(request);
             return result;
         }
@@ -171,7 +171,7 @@ namespace FISOBCOS_NetSdk
         /// 构建交易参数
         /// </summary>
         /// <param name="txData">交易数据</param>
-        /// <param name="blockNumber"></param>
+        /// <param name="blockNumber">区块高度</param>
         /// <param name="to">发送地址</param>
         /// <returns>交易参数实体</returns>
         protected TransactionDto BuildTransactionParams(string txData, long blockNumber, string to)
