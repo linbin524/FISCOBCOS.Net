@@ -1,4 +1,4 @@
-﻿Wei FISCOBCOS.Net
+English | [中文](https://github.com/linbin524/FISCOBCOS.Net/blob/main/README.zh.md)
 
 
 
@@ -8,7 +8,7 @@ Fiscobcos blockchain net version SDK currently uses the JSON RPC API interface a
 
 
 
-####Software architecture
+#### Software architecture
 
 
 
@@ -39,7 +39,7 @@ FISCOBCOS.Net SDK adopts net core 3.1, and the supporting development tools are 
 
 
 
-####Installation tutorial
+#### Installation tutorial
 
 
 
@@ -59,9 +59,7 @@ reference resources:
 
 
 
-####Instructions for use
-
-
+#### Instructions for use
 
 1. In fisobcos_ The netsdk class library is configured with the baseconfiguration file, and the corresponding underlying request defaulturl is configured, such as: http://127.0.0.1 :8545 。
 
@@ -74,10 +72,7 @@ reference resources:
 Note: the common JSON RPC API is relatively simple and does not encapsulate the corresponding dto entity. During operation, the entity can be generated through online JSON for business combination.
 
 
-
-####Iteration plan
-
-
+#### Iteration plan
 
 1. Implement channel protocol.
 
@@ -88,9 +83,7 @@ Note: the common JSON RPC API is relatively simple and does not encapsulate the 
 
 
 
-####Participation contribution
-
-
+#### Participation contribution
 
 1. Fork warehouse
 
