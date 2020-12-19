@@ -1,12 +1,14 @@
 ﻿using FISOBCOS_NetSdk.Core;
 using FISOBCOS_NetSdk.Dto;
 using FISOBCOS_NetSdk.Utils;
+using FISOBCOS_NetSdk.Utis;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.ABI.JsonDeserialisation;
 using Nethereum.ABI.Model;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
+using Nethereum.JsonRpc.Client.RpcMessages;
 using Nethereum.RLP;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Signer;
@@ -16,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FISOBCOS_NetSdk
@@ -71,7 +74,8 @@ namespace FISOBCOS_NetSdk
             var transParams = BuildTransactionParams(binCode, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this.PrivateKey.HexToByteArray(), true));
-            return await SendRequestAysnc<string>(tx.Data, tx.Signature);
+            var result = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+            return result;
 
         }
 
@@ -83,7 +87,7 @@ namespace FISOBCOS_NetSdk
         public async Task<ReceiptResultDto> DeployContractWithReceiptAsync(string binCode)
         {
             var txHash = await DeployContractAsync(binCode);
-            var receiptResult = await GetTranscationReceipt(txHash);
+            var receiptResult = await GetTranscationReceiptAsync(txHash);
             return receiptResult;
         }
 
@@ -100,6 +104,8 @@ namespace FISOBCOS_NetSdk
         /// <returns>交易回执</returns>
         public async Task<ReceiptResultDto> SendTranscationWithReceiptAsync(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
         {
+            ReceiptResultDto receiptResult=new ReceiptResultDto();
+
             var des = new ABIDeserialiser();
             var contract = des.DeserialiseContract(abi);
             var function = contract.Functions.FirstOrDefault(x => x.Name == functionName);
@@ -112,7 +118,14 @@ namespace FISOBCOS_NetSdk
             var tx = BuildRLPTranscation(transDto);
             tx.Sign(new EthECKey(this.PrivateKey.HexToByteArray(), true));
             var txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
-            return await GetTranscationReceipt(txHash);
+
+            if (txHash != null)
+            {
+                receiptResult = await GetTranscationReceiptAsync(txHash);
+                if(receiptResult==null)
+                throw new Exception("txHash != null 的时候报错了：" + receiptResult.ToJson());
+            }
+            return receiptResult;
         }
 
         /// <summary>
@@ -120,10 +133,12 @@ namespace FISOBCOS_NetSdk
         /// </summary>
         /// <param name="tanscationHash">交易Hash</param>
         /// <returns></returns>
-        public async Task<ReceiptResultDto> GetTranscationReceipt(string tanscationHash)
+        public async Task<ReceiptResultDto> GetTranscationReceiptAsync(string tanscationHash)
         {
-            var request = new RpcRequest(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
-            var result = await this.RpcClient.SendRequestAsync<ReceiptResultDto>(request);
+            //var request = new RpcRequest(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
+            var getRequest = new RpcRequestMessage(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
+            var result = await HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest);
+            if (result == null) throw new Exception(" 获取交易回执方法报空：" + result.ToJson());
             return result;
         }
 
@@ -145,6 +160,8 @@ namespace FISOBCOS_NetSdk
             callDto.Data = "0x" + function.Sha3Signature;
             var getRequest = new RpcRequest(this.RequestId, JsonRPCAPIConfig.Call, new object[] { this.RequestObjectId, callDto });
             var result = await this.RpcClient.SendRequestAsync<ReceiptResultDto>(getRequest);
+            //var getRequest = new RpcRequestMessage(this.RequestId, JsonRPCAPIConfig.Call, new object[] { this.RequestObjectId, callDto });
+            //var result = HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest); //同步方法
             return result;
 
         }
