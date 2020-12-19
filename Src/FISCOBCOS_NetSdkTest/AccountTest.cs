@@ -2,12 +2,19 @@ using FISOBCOS_NetSdk;
 using FISOBCOS_NetSdk.Dto;
 using FISOBCOS_NetSdk.Utis;
 using System;
+using System.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FISCOBCOS_NetSdkTest
 {
     public class AccountTest
     {
+        public ITestOutputHelper _testOutput;//辅助输出对应的测试结果
+        public AccountTest(ITestOutputHelper output)
+        {
+            _testOutput = output;
+        }
         /// <summary>
         /// 生成一对公私钥，生成的json可以copy 到txt文件，直接导入webase front 等组件中
         /// </summary>
@@ -16,6 +23,8 @@ namespace FISCOBCOS_NetSdkTest
         {
             var account = AccountUtils.GeneratorAccount("adminUser" + new Random().Next(100000, 1000000).ToString());
             var accountString = account.ToJson();
+            // Debug.WriteLine(accountString);
+            _testOutput.WriteLine(accountString);
             Assert.True(accountString.ToObject<AccountDto>().PublicKey.Length > 0);
         }
 
