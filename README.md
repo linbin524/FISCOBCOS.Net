@@ -25,7 +25,7 @@ FISCOBCOS.Net SDK adopts net core 3.1, and the supporting development tools are 
 
 
 
-1. Implement RPC asynchronous request
+1. Implement RPC Synchronous request / asynchronous request
 
 2. Realize the generation of FISCO bcos public and private keys and accounts, expand the generation of webase front, import user JSON, and directly import webase middleware.
 
@@ -37,7 +37,7 @@ FISCOBCOS.Net SDK adopts net core 3.1, and the supporting development tools are 
 
 6. Configure the corresponding unit test demo for all operations. Reference can be made to copy.
 
-
+Note: send transaction and return transaction receipt test synchronously, there is a certain probability that it will be empty, because the underlying transaction is repackaged, and the consensus has not been completed.
 
 #### Installation tutorial
 
@@ -63,7 +63,7 @@ reference resources:
 
 1. In fisobcos_ The netsdk class library is configured with the baseconfiguration file, and the corresponding underlying request defaulturl is configured, such as: http://127.0.0.1 :8545 。
 
-2. Use contractservice and apiservice for related business operations.
+2. Use Contractservice and QueryApiservice for related business operations.
 
 3. Contractservice mainly encapsulates contract calls and other operations. For details, please refer to the ContractTest.cs 。
 

@@ -84,11 +84,87 @@ namespace FISOBCOS_NetSdk.Utils
 
             return responseStr.ToString();
         }
-        public static async Task<T> RpcPost<T>(string url, RpcRequestMessage rpcRequestMessage = null) where T : class, new()
+        /// <summary>
+        /// 同步
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="rpcRequestMessage"></param>
+        /// <returns></returns>
+        public static T RpcPost<T>(string url, RpcRequestMessage rpcRequestMessage = null) where T : class, new()
         {
+            T t = new T();
             HttpWebRequest request;
             RpcResponseMessage rpcResponseMessage;
-            T t=new T();
+
+            StreamWriter requestStream = null;
+            HttpWebResponse response = null;
+            request = BuildRequest(url, rpcRequestMessage);
+            try
+            {
+                response = request.GetResponse() as HttpWebResponse;//异步
+                rpcResponseMessage = BuildResponse(response);
+                t = AnalysisResponse<T>(rpcResponseMessage);
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                request = null;
+                requestStream = null;
+                rpcResponseMessage = null;
+            }
+            return t;
+        }
+
+        /// <summary>
+        /// 异步
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="rpcRequestMessage"></param>
+        /// <returns></returns>
+        public static async Task<T> RpcPostAsync<T>(string url, RpcRequestMessage rpcRequestMessage = null) where T : class, new()
+        {
+            T t = new T();
+            HttpWebRequest request;
+            RpcResponseMessage rpcResponseMessage;
+
+            StreamWriter requestStream = null;
+            HttpWebResponse response = null;
+            request = BuildRequest(url, rpcRequestMessage);
+
+            try
+            {
+                response = await request.GetResponseAsync() as HttpWebResponse;//异步
+                rpcResponseMessage = BuildResponse(response);
+                t = AnalysisResponse<T>(rpcResponseMessage);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                request = null;
+                requestStream = null;
+                rpcResponseMessage = null;
+
+            }
+
+            return t;
+        }
+
+
+        public static HttpWebRequest BuildRequest(string url, RpcRequestMessage rpcRequestMessage = null)
+        {
+
+            HttpWebRequest request;
             string defaultContentType = "Application/Json-Rpc";
             //如果是发送HTTPS请求  
             if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
@@ -114,54 +190,47 @@ namespace FISOBCOS_NetSdk.Utils
             StreamWriter requestStream = null;
             WebResponse response = null;
             object responseStr = null;
-            JsonSerializerSettings jsonSerializerSettings = DefaultJsonSerializerSettingsFactory.BuildDefaultJsonSerializerSettings(); ;
-            try
-            {
-               
-                requestStream = new StreamWriter(request.GetRequestStream());
-                var rpcRequestJson = JsonConvert.SerializeObject(rpcRequestMessage, jsonSerializerSettings);
-                // var httpContent = new StringContent(rpcRequestJson, Encoding.UTF8, "application/json");
-                requestStream.Write(rpcRequestJson);
-                requestStream.Close();
-
-                response = await request.GetResponseAsync() as HttpWebResponse;//异步
-                //response = request.GetResponse();//同步
-                if (response != null)
-                {
-                    using (var streamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    using (var reader = new JsonTextReader(streamReader))
-                    {
-                        string temp = streamReader.ReadToEnd();
-                        t= temp.ToObject<RpcResponseMessage>().Result.ToObject<T>();
-                        //var serializer = JsonSerializer.Create(jsonSerializerSettings);
-                        //rpcResponseMessage = serializer.Deserialize<RpcResponseMessage>(reader);
-                        //t = rpcResponseMessage.Result.ToObject<T>();
-                    }
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                request = null;
-                requestStream = null;
-                rpcResponseMessage = null;
-                //t = new T();
-            }
-
-            return t;
+            JsonSerializerSettings jsonSerializerSettings = DefaultJsonSerializerSettingsFactory.BuildDefaultJsonSerializerSettings();
+            requestStream = new StreamWriter(request.GetRequestStream());
+            var rpcRequestJson = JsonConvert.SerializeObject(rpcRequestMessage, jsonSerializerSettings);
+            // var httpContent = new StringContent(rpcRequestJson, Encoding.UTF8, "application/json");
+            requestStream.Write(rpcRequestJson);
+            requestStream.Close();
+            return request;
         }
+        public static RpcResponseMessage BuildResponse(HttpWebResponse response)
+        {
+            RpcResponseMessage rpcResponseMessage = null;
+            if (response != null)
+            {
+                using (var streamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                using (var reader = new JsonTextReader(streamReader))
+                {
+                    string temp = streamReader.ReadToEnd();
 
+                    rpcResponseMessage = temp.ToObject<RpcResponseMessage>();
+
+                }
+            }
+            return rpcResponseMessage;
+        }
+        public static T AnalysisResponse<T>(RpcResponseMessage rpcResponseMessage) where T : class, new()
+        {
+
+            T result = new T();
+            if (!rpcResponseMessage.HasError)
+            {
+                result = rpcResponseMessage.Result.ToObject<T>();
+            }
+
+            return result;
+        }
 
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             return true; //总是接受  
         }
-       
+
         #endregion
 
         #region Put

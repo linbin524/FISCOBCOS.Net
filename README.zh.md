@@ -15,12 +15,14 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual St
 
 #### 功能介绍
 
-1.  实现 RPC 异步请求
+1.  实现 RPC 同步/异步请求
 2.  实现FISCO BCOS公私钥、账户生成，拓展生成Webase Front导入用户json，可以直接导入Webase中间件。
 3.  实现合约操作封装，如：合约部署、请求参数构建、交易签名、RLP编码转换等。
 4.  实现合约部署、合约交易、合约Call操作、合约交易回执获取等。
 5.  实现合约input、output、event等解析。
 6.  所有操作配置对应的单元测试Demo。可以参考复制。
+
+备注：发送交易并同步返回交易回执测试，有一定几率为空，那是因为底层交易再打包，还没完成共识。
 
 #### 安装教程
 
@@ -35,7 +37,7 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual St
 #### 使用说明
 
 1. 在 FISOBCOS_NetSdk类库配置 BaseConfig 文件，配置好对应的底层请求DefaultUrl，如：http://127.0.0.1:8545 。
-2. 使用ContractService 和ApiService进行相关业务操作。
+2. 使用ContractService 和QueryApiService进行相关业务操作。
 3. ContractService 主要是合约调用等操作封装，详细看对应的单元测试中的ContractTest.cs。
 4. ApiService 是底层非交易的Json RPC API 封装，可参考单元测试ApiServiceTest.cs。
 备注：通用的Json RPC API 相对简单，没有封装对应的DTO 实体，操作时候可以通过在线json 生成实体进行业务结合。

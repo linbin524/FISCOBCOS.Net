@@ -23,10 +23,10 @@ using System.Threading.Tasks;
 
 namespace FISOBCOS_NetSdk
 {
-    public class ContractService
+    public class ContractService : BaseService
     {
 
-        public RpcClient RpcClient;
+        public RpcClient _rpcClient;
 
         /// <summary>
         /// 创建合约服务
@@ -36,35 +36,14 @@ namespace FISOBCOS_NetSdk
         /// <param name="chainId">链Id</param>
         /// <param name="groupId">群组Id</param>
         /// <param name="privateKey">用私钥</param>
-        public ContractService(string url, int rpcId, int chainId, int groupId, string privateKey)
+        public ContractService(string url, int rpcId, int chainId, int groupId, string privateKey) : base(url, rpcId, chainId, groupId, privateKey)
         {
-            RpcClient = new RpcClient(new Uri(url));
-            this.RpcId = rpcId;
-            this.ChainId = chainId;
-            this.GroupId = groupId;
-            this.GasPrice = BaseConfig.DefaultGasPrice;
-            this.GasLimit = BaseConfig.DefaultGasLimit;
-            this.RequestId = BaseConfig.DefaultRequestId;
-            this.RequestObjectId = BaseConfig.DefaultRequestObjectId;
-            this.TranscationValue = BaseConfig.DefaultTranscationsValue;
-            this.PrivateKey = privateKey;
+            _rpcClient = new RpcClient(new Uri(url));
+
         }
 
-        #region 基础属性
-        protected int RpcId { get; set; }
-        protected int GroupId { get; set; }
-        protected int ChainId { get; set; }
-        protected int GasLimit { get; set; }
-        protected int GasPrice { get; set; }
-        protected int RequestId { get; set; }
-        protected int RequestObjectId { get; set; }
-        protected int TranscationValue { get; set; }
-        protected string PrivateKey { get; set; }
-        #endregion
-
-
         /// <summary>
-        /// 通用合约部署，只返回交易Hash
+        /// 异步 通用合约部署，只返回交易Hash
         /// </summary>
         /// <param name="binCode">合约内容</param>
         /// <returns>交易Hash</returns>
@@ -73,14 +52,14 @@ namespace FISOBCOS_NetSdk
             var blockNumber = await GetBlockNumberAsync();
             var transParams = BuildTransactionParams(binCode, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
-            tx.Sign(new EthECKey(this.PrivateKey.HexToByteArray(), true));
+            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var result = await SendRequestAysnc<string>(tx.Data, tx.Signature);
             return result;
 
         }
 
         /// <summary>
-        /// 通用合约部署，返回交易回执
+        /// 异步 通用合约部署，返回交易回执
         /// </summary>
         /// <param name="binCode">合约内容</param>
         /// <returns>交易回执</returns>
@@ -94,7 +73,7 @@ namespace FISOBCOS_NetSdk
 
 
         /// <summary>
-        /// 发送交易,返回交易回执
+        ///异步 发送交易,返回交易回执
         /// </summary>
         /// <param name="abi">合约abi</param>
         /// <param name="contractAddress">合约地址</param>
@@ -104,7 +83,7 @@ namespace FISOBCOS_NetSdk
         /// <returns>交易回执</returns>
         public async Task<ReceiptResultDto> SendTranscationWithReceiptAsync(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
         {
-            ReceiptResultDto receiptResult=new ReceiptResultDto();
+            ReceiptResultDto receiptResult = new ReceiptResultDto();
 
             var des = new ABIDeserialiser();
             var contract = des.DeserialiseContract(abi);
@@ -116,34 +95,35 @@ namespace FISOBCOS_NetSdk
             var blockNumber = await GetBlockNumberAsync();
             var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
             var tx = BuildRLPTranscation(transDto);
-            tx.Sign(new EthECKey(this.PrivateKey.HexToByteArray(), true));
+            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
 
             if (txHash != null)
             {
                 receiptResult = await GetTranscationReceiptAsync(txHash);
-                if(receiptResult==null)
-                throw new Exception("txHash != null 的时候报错了：" + receiptResult.ToJson());
+                if (receiptResult == null)
+                    throw new Exception("txHash != null 的时候报错了：" + receiptResult.ToJson());
             }
             return receiptResult;
         }
 
         /// <summary>
-        /// 获取交易回执
+        /// 异步 获取交易回执
         /// </summary>
         /// <param name="tanscationHash">交易Hash</param>
         /// <returns></returns>
         public async Task<ReceiptResultDto> GetTranscationReceiptAsync(string tanscationHash)
         {
-            //var request = new RpcRequest(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
-            var getRequest = new RpcRequestMessage(this.RequestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this.RequestObjectId, tanscationHash });
-            var result = await HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest);
+            var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
+            var getRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
+            //var result = await HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest);
+            var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(request);
             if (result == null) throw new Exception(" 获取交易回执方法报空：" + result.ToJson());
             return result;
         }
 
         /// <summary>
-        /// Call 调用 适用于链上调用但不需要共识（通常用constant,view等修饰的合约方法）
+        /// 异步 Call 调用 适用于链上调用但不需要共识（通常用constant,view等修饰的合约方法）
         /// </summary>
         /// <param name="contractAddress">合约地址</param>
         /// <param name="abi">合约abi</param>
@@ -152,24 +132,22 @@ namespace FISOBCOS_NetSdk
         public async Task<ReceiptResultDto> CallRequestAsync(string contractAddress, string abi, string callFunctionName)
         {
             CallInput callDto = new CallInput();
-            callDto.From = new Account(this.PrivateKey).Address.ToLower();//address ;
+            callDto.From = new Account(this._privateKey).Address.ToLower();//address ;
             callDto.To = contractAddress;
             var contractAbi = new ABIDeserialiser().DeserialiseContract(abi);
             var function = contractAbi.Functions.FirstOrDefault(x => x.Name == callFunctionName);
             callDto.Value = new HexBigInteger(0);
             callDto.Data = "0x" + function.Sha3Signature;
-            var getRequest = new RpcRequest(this.RequestId, JsonRPCAPIConfig.Call, new object[] { this.RequestObjectId, callDto });
-            var result = await this.RpcClient.SendRequestAsync<ReceiptResultDto>(getRequest);
+            var getRequest = new RpcRequest(this._requestId, JsonRPCAPIConfig.Call, new object[] { this._requestObjectId, callDto });
+            var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(getRequest);
             //var getRequest = new RpcRequestMessage(this.RequestId, JsonRPCAPIConfig.Call, new object[] { this.RequestObjectId, callDto });
             //var result = HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest); //同步方法
             return result;
 
         }
 
-        #region 内部方法
-
         /// <summary>
-        /// 请求发送RPC交易
+        /// 异步请求发送RPC交易
         /// </summary>
         /// <typeparam name="TResult">返回结果</typeparam>
         /// <param name="txData">交易数据（rlp）</param>
@@ -178,65 +156,22 @@ namespace FISOBCOS_NetSdk
         protected async Task<TResult> SendRequestAysnc<TResult>(byte[][] txData, EthECDSASignature txSignature)
         {
             var rlpSignedEncoded = RLPEncoder.EncodeSigned(new SignedData(txData, txSignature), 10).ToHex();
-            var request = new RpcRequest(this.RequestId, JsonRPCAPIConfig.SendRawTransaction, new object[] { this.RequestObjectId, rlpSignedEncoded });
-            var response = await RpcClient.SendRequestAsync<TResult>(request);
+            var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.SendRawTransaction, new object[] { this._requestObjectId, rlpSignedEncoded });
+            var response = await _rpcClient.SendRequestAsync<TResult>(request);
             return response;
         }
-
-
         /// <summary>
-        /// 构建交易参数
-        /// </summary>
-        /// <param name="txData">交易数据</param>
-        /// <param name="blockNumber">区块高度</param>
-        /// <param name="to">发送地址</param>
-        /// <returns>交易参数实体</returns>
-        protected TransactionDto BuildTransactionParams(string txData, long blockNumber, string to)
-        {
-            TransactionDto rawTransaction = new TransactionDto();
-
-            rawTransaction.BlockLimit = blockNumber + 500;//交易防重上限，默认加500
-            rawTransaction.Data = txData;//交易数据
-            rawTransaction.ExtraData = "";//附加数据，默认为空字符串
-            rawTransaction.FiscoChainId = this.ChainId;//链ID
-            rawTransaction.GasLimit = this.GasLimit;//交易消耗gas上限，默认为30000000
-            rawTransaction.GasPrice = this.GasPrice;//默认为30000000
-            rawTransaction.Randomid = new Random().Next(10000000, 1000000000); ;
-            rawTransaction.To = to;//合约部署默认为空
-            rawTransaction.Value = this.TranscationValue;//默认为0
-            rawTransaction.GroupId = this.GroupId;//群组ID 
-
-            return rawTransaction;
-
-        }
-
-        /// <summary>
-        /// 创建交易RLP
-        /// </summary>
-        /// <param name="rawTransaction">交易实体</param>
-        /// <returns>RLPSigner</returns>
-        protected RLPSigner BuildRLPTranscation(TransactionDto rawTransaction)
-        {
-            var tx = new RLPSigner(new[] {rawTransaction.Randomid.ToBytesForRLPEncoding(),rawTransaction.GasPrice.ToBytesForRLPEncoding(), rawTransaction.GasLimit.ToBytesForRLPEncoding(),rawTransaction.BlockLimit.ToBytesForRLPEncoding(), rawTransaction.To.HexToByteArray(),  rawTransaction.Value.ToBytesForRLPEncoding(),rawTransaction.Data.HexToByteArray(),rawTransaction.FiscoChainId.ToBytesForRLPEncoding(),
-              rawTransaction.GroupId.ToBytesForRLPEncoding(),rawTransaction.ExtraData.HexToByteArray()});
-            return tx;
-        }
-
-        /// <summary>
-        /// 获取当前区块高度
+        /// 异步获取当前区块高度
         /// </summary>
         /// <param name="rpcId">rpcId</param>
         /// <param name="groupId">群组Id</param>
         /// <returns>当前区块高度</returns>
-        protected async Task<long> GetBlockNumberAsync()
+        public async Task<long> GetBlockNumberAsync()
         {
-            var request = new RpcRequest(this.RpcId, JsonRPCAPIConfig.GetBlockNumber, new object[] { this.GroupId });
-            var responseResult = await RpcClient.SendRequestAsync<string>(request);
+            var request = new RpcRequest(this._rpcId, JsonRPCAPIConfig.GetBlockNumber, new object[] { this._groupId });
+            var responseResult = await _rpcClient.SendRequestAsync<string>(request);
             long blockNumber = Convert.ToInt64(responseResult, 16);
             return blockNumber;
         }
-        #endregion
-
-
     }
 }
