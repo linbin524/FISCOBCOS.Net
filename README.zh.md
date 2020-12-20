@@ -36,6 +36,8 @@ FISCOBCOS.Net Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual St
 
 #### 使用说明
 
+可以使用nuget包安装模式进行安装，  命令：Install-Package FISOBCOS_NetSdk -Version 1.0.0.2
+
 1. 在 FISOBCOS_NetSdk类库配置 BaseConfig 文件，配置好对应的底层请求DefaultUrl，如：http://127.0.0.1:8545 。
 2. 使用ContractService 和QueryApiService进行相关业务操作。
 3. ContractService 主要是合约调用等操作封装，详细看对应的单元测试中的ContractTest.cs。
