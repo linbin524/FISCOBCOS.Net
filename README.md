@@ -61,6 +61,8 @@ reference resources:
 
 #### Instructions for use
 
+you can use nuget packages to install sdk,  command：Install-Package FISOBCOS_NetSdk -Version 1.0.0.2
+
 1. In fisobcos_ The netsdk class library is configured with the baseconfiguration file, and the corresponding underlying request defaulturl is configured, such as: http://127.0.0.1 :8545 。
 
 2. Use Contractservice and QueryApiservice for related business operations.
