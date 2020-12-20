@@ -1,12 +1,12 @@
-﻿using FISOBCOS_NetSdk.Dto;
-using FISOBCOS_NetSdk.Utis;
+﻿using FISCOBCOS_NetSdk.Dto;
+using FISCOBCOS_NetSdk.Utis;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FISOBCOS_NetSdk
+namespace FISCOBCOS_NetSdk
 {
     public class AccountUtils
     {

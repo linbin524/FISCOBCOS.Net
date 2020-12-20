@@ -1,11 +1,11 @@
-﻿using FISOBCOS_NetSdk.Core;
+﻿using FISCOBCOS_NetSdk.Core;
 using Nethereum.JsonRpc.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FISOBCOS_NetSdk.ApiService
+namespace FISCOBCOS_NetSdk.ApiService
 {
     /// <summary>
     /// 基础json rpc api 查询服务

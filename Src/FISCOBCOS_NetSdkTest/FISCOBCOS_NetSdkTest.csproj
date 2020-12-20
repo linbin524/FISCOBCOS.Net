@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FISOBCOS_NetSdk\FISOBCOS_NetSdk.csproj" />
+    <ProjectReference Include="..\FISCOBCOS_NetSdk\FISCOBCOS_NetSdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>

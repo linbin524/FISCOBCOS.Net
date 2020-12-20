@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FISOBCOS_NetSdk
+namespace FISCOBCOS_NetSdk
 {
     /// <summary>
     ///  JsonRPCAPI 方法配置

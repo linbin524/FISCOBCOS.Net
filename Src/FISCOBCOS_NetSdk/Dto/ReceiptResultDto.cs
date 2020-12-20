@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FISOBCOS_NetSdk.Dto
+namespace FISCOBCOS_NetSdk.Dto
 {
 
     /// <summary>

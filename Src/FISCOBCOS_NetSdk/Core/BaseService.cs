@@ -1,5 +1,5 @@
-﻿using FISOBCOS_NetSdk.Dto;
-using FISOBCOS_NetSdk.Utils;
+﻿using FISCOBCOS_NetSdk.Dto;
+using FISCOBCOS_NetSdk.Utils;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.ABI.JsonDeserialisation;
 using Nethereum.ABI.Model;
@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FISOBCOS_NetSdk.Core
+namespace FISCOBCOS_NetSdk.Core
 {
     public class BaseService
     {

@@ -1,5 +1,5 @@
 ﻿
-using FISOBCOS_NetSdk.Utis;
+using FISCOBCOS_NetSdk.Utis;
 using Nethereum.JsonRpc.Client;
 using Nethereum.JsonRpc.Client.RpcMessages;
 using Newtonsoft.Json;
@@ -15,7 +15,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FISOBCOS_NetSdk.Utils
+namespace FISCOBCOS_NetSdk.Utils
 {
     public class HttpUtils
     {

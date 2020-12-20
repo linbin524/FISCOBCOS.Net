@@ -6,7 +6,7 @@ using System.Text;
 using System.Web;
 
 
-namespace FISOBCOS_NetSdk.Utils
+namespace FISCOBCOS_NetSdk.Utils
 {
 
     public class FileUtils

@@ -1,6 +1,6 @@
-using FISOBCOS_NetSdk;
-using FISOBCOS_NetSdk.Dto;
-using FISOBCOS_NetSdk.Utis;
+using FISCOBCOS_NetSdk;
+using FISCOBCOS_NetSdk.Dto;
+using FISCOBCOS_NetSdk.Utis;
 using System;
 using System.Diagnostics;
 using Xunit;

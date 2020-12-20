@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace FISOBCOS_NetSdk.Utis
+namespace FISCOBCOS_NetSdk.Utis
 {
     public static class JsonUtils
     {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FISOBCOS_NetSdk.Core
+namespace FISCOBCOS_NetSdk.Core
 {
     public class BuildParams
     {

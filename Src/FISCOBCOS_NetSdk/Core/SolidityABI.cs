@@ -1,4 +1,4 @@
-﻿using FISOBCOS_NetSdk.Dto;
+﻿using FISCOBCOS_NetSdk.Dto;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.ABI.JsonDeserialisation;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FISOBCOS_NetSdk.Core
+namespace FISCOBCOS_NetSdk.Core
 {
     /// <summary>
     /// 合约解析

@@ -1,7 +1,7 @@
-﻿using FISOBCOS_NetSdk.Core;
-using FISOBCOS_NetSdk.Dto;
-using FISOBCOS_NetSdk.Utils;
-using FISOBCOS_NetSdk.Utis;
+﻿using FISCOBCOS_NetSdk.Core;
+using FISCOBCOS_NetSdk.Dto;
+using FISCOBCOS_NetSdk.Utils;
+using FISCOBCOS_NetSdk.Utis;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.ABI.JsonDeserialisation;
 using Nethereum.ABI.Model;
@@ -21,7 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FISOBCOS_NetSdk
+namespace FISCOBCOS_NetSdk
 {
     public class ContractService : BaseService
     {
